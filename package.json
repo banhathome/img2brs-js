@@ -2,7 +2,9 @@
   "name": "img2brs",
   "version": "1.0.0",
   "description": "Converts images to Brickadia save files (.brs)",
-  "main": "dist/main.js",
+  "main": "src/index.js",
+  "browser": "dist/index.web.js",
+  "module": "dist/index.node.js",
   "scripts": {
     "build": "webpack",
     "prepare": "webpack",
@@ -28,6 +30,7 @@
   },
   "devDependencies": {
     "webpack": "^5.100.1",
-    "webpack-cli": "^6.0.1"
+    "webpack-cli": "^6.0.1",
+    "webpack-node-externals": "^3.0.0"
   }
 }
