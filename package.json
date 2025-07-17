@@ -1,0 +1,32 @@
+{
+  "name": "img2brs",
+  "version": "1.0.0",
+  "description": "Converts images to Brickadia save files (.brs)",
+  "main": "dist/main.js",
+  "scripts": {
+    "build": "webpack",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "banhathome <chris@chrisbanh.com>",
+  "license": "MIT",
+  "keywords": [
+    "brs",
+    "brickadia",
+    "save",
+    "file",
+    "format",
+    "image"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/banhathome/img2brs-js.git"
+  },
+  "dependencies": {
+    "brs-js": "^2.1.2",
+    "canvas": "^3.1.2"
+  },
+  "devDependencies": {
+    "webpack": "^5.100.1",
+    "webpack-cli": "^6.0.1"
+  }
+}
