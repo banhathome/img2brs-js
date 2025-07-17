@@ -1,7 +1,7 @@
 import brs from 'brs-js';
 import { createCanvas } from 'canvas';
 import { SIMPLE_DIRECTION_MAP, DEFAULT_DESCRIPTION, DEFAULT_FILE_NAME, isNode } from './constants';
-import { getSaveTime } from './utils';
+import { getSaveTime, srgbToLinear } from './utils';
 
 /**
  * Converts inputted File into a .brs Blob
@@ -67,7 +67,7 @@ export default function img2brs(file, options, shouldDownload = false) {
 
     const link = document.createElement('a');
     link.href = url;
-    link.download = _saveName.endsWith('.brs') ? fileName : `${fileName}.brs`;
+    link.download = fileName.endsWith('.brs') ? fileName : `${fileName}.brs`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
