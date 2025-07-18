@@ -24,7 +24,7 @@ export function getSaveTime() {
   const ue4Ticks = UE4_EPOCH_OFFSET + totalTicks;
 
   const buffer = new ArrayBuffer(8);
-  const view = new DataView(new ArrayBuffer(8));
+  const view = new DataView(buffer);
 
   // Write as signed 64-bit integer in Little Endian format
   view.setBigInt64(0, ue4Ticks, true);
