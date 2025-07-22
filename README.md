@@ -1,8 +1,10 @@
 # img2brs.js
 
-[![npm package][npm-badge]][npm]
+[![npm package][npm-badge]][npm] [![npm package][npm-downloads-badge]][npm]
 
 [npm-badge]: https://img.shields.io/npm/v/img2brs.svg
+[npm-downloads-badge]: https://img.shields.io/npm/d18m/img2brs.svg
+
 [npm]: https://www.npmjs.org/package/img2brs
 
 JS library to convert images into Brickadia save files (.brs). Compatible with both Web Worker and browser environments (Node.js support coming soon!)
