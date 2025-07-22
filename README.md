@@ -48,7 +48,7 @@ async function processImage() {
   const brsBlob = img2brs(image, options);
 
   // Auto-download for user
-  const url = URL.createObjectURL(result);
+  const url = URL.createObjectURL(brsBlob);
   const link = document.createElement('a');
   link.href = url;
   link.download = 'somefile.brs';
