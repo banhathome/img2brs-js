@@ -91,7 +91,7 @@ export default function MyComponent() {
   const workerRef = useRef(null);
 
   workerRef.current = new Worker(
-      new URL('./img2brs-worker.js', import.meta.url)
+      new URL('./my-web-worker.js', import.meta.url)
   );
 
   // ...
