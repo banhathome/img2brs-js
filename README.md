@@ -23,6 +23,7 @@ $ yarn add img2brs
 ## Usage Examples
 
 ### Browser Usage Example
+> Large images will cause the user's browser tab to freeze, so we highly recommend using a [Web Worker](#recommended-web-worker-usage-example) instead.
 
 ```javascript
 import img2brs, { BRICKS, MATERIALS } from 'img2brs';
@@ -56,8 +57,8 @@ async function processImage() {
 }
 ```
 
-### Web Worker Usage Example
-> In Next.js 12+/Webpack 5+
+### (Recommended) Web Worker Usage Example
+> This examples is compatible with Next.js 12+/Webpack 5+
 
 ```javascript
 // my-web-worker.js
@@ -71,12 +72,12 @@ self.onmessage = async function(e) {
 
     self.postMessage({
       type: 'success',
-      result: result
+      result,
     });
   } catch (error) {
     self.postMessage({
       type: 'error',
-      error: error.message || error.toString()
+      error: error.message || error.toString(),
     });
   }
 };
@@ -117,7 +118,7 @@ img2brs(image, options)
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `image` | `ImageBitmap` | Yes | Input image to convert<br> |
+| `image` | `ImageBitmap` | Yes | Input image to convert |
 | `options` | `Object` | Yes | Configuration options for the conversion process |
 
 ### Options Object
@@ -127,18 +128,18 @@ img2brs(image, options)
 | `brick` | `String` | Yes | The type of brick to use from the BRICKS enum/constants<br>**See:** [Supported Bricks](#supported-bricks) | `'PB_DefaultBrick'` |
 | `material` | `String` | Yes | The material type to apply to bricks from the MATERIALS enum/constants<br>**See:** [Supported Materials](#supported-materials) | `'BMC_Plastic'` |
 | `size` | `[Number, Number, Number]` | Yes | The dimensions of each brick as `[width, depth, height]` | `[2, 2, 6]` |
-| `simpleDirection` | `String` | No | Orientation of the brick placement<br>**Values:** `"vertical"` or `"horizontal"` | `'vertical'` |
+| `simpleDirection` | `String` | No | Orientation of the brick placement<br>**Values:** `'vertical'` or `'horizontal'` | `'vertical'` |
 | `description` | `String` | No | Description for the save file | `'It is Dawson!'` |
 
 ### Return Value
 
 | Type | Description |
 |------|-------------|
-| `Blob` | A Blob object containing the .brs file data that can be saved or downloaded |
+| `Blob` | A Blob object containing the .brs file data |
 
 ## Supported Bricks
 
-The `BRICKS` constant is a named export containing all supported brick types:
+`BRICKS` contains all supported brick types:
 
 ```javascript
 import { BRICKS } from 'img2brs';
@@ -156,7 +157,7 @@ import { BRICKS } from 'img2brs';
 
 ## Supported Materials
 
-The `MATERIALS` constant is a named export containing all supported material types:
+`MATERIALS` contains all supported material types:
 
 ```javascript
 import { MATERIALS } from 'img2brs';
