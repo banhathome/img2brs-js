@@ -34,6 +34,5 @@ export const SIMPLE_DIRECTION_MAP = Object.freeze({
 });
 
 export const DEFAULT_DESCRIPTION = 'Generated with img2brs.js';
-export const DEFAULT_FILE_NAME = 'default.brs';
 
 export const isNode = typeof process === 'object' && process.env && process.versions?.node;

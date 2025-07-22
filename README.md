@@ -5,7 +5,7 @@
 [npm-badge]: https://img.shields.io/npm/v/img2brs.svg
 [npm]: https://www.npmjs.org/package/img2brs
 
-JS library to convert images into Brickadia save files (.brs). Compatible with both Node.js (WIP) and browser environments.
+JS library to convert images into Brickadia save files (.brs). Compatible with both Web Worker and browser environments (Node.js support coming soon!)
 
 (JS version of [img2brs](https://github.com/mraware/img2brs) by [mraware](https://github.com/mraware))
 
@@ -22,48 +22,86 @@ $ yarn add img2brs
 
 ## Usage Examples
 
-### Basic Usage (Browser)
+### Browser Usage Example
 
 ```javascript
 import img2brs, { BRICKS, MATERIALS } from 'img2brs';
 
-const fileInput = document.getElementById('imageInput');
-const file = fileInput.files[0];
+async function processImage() {
+  const fileInput = document.getElementById('imageInput');
+  const file = fileInput.files[0];
 
-const options = {
-  brick: 'PB_DefaultBrick',
-  material: 'BMC_Plastic',
-  size: [2, 2, 6],
-  simpleDirection: 'vertical',
-  description: 'My Custom Pixel Art',
-  saveName: 'my_pixel_art.brs',
-};
+  const image = await createImageBitmap(file);
 
-// Convert and get blob
-const brsBlob = img2brs(file, options);
+  const options = {
+    brick: 'PB_DefaultBrick',
+    material: 'BMC_Plastic',
+    size: [2, 2, 6],
+    simpleDirection: 'vertical',
+    description: 'My Custom Pixel Art',
+  };
 
-// Convert and auto-download for web user
-img2brs(file, options, true);
+  // Convert and get blob
+  const brsBlob = img2brs(image, options);
+
+  // Auto-download for user
+  const url = URL.createObjectURL(result);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'somefile.brs';
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
 ```
 
-### Node.js Usage
+### Web Worker Usage Example
+> In Next.js 12+/Webpack 5+
 
 ```javascript
-import img2brs, { BRICKS, MATERIALS } from 'img2brs';
-import fs from 'fs';
+// my-web-worker.js
+import img2brs from 'img2brs';
 
-// Using file path
-const options = {
-  brick: 'PB_DefaultBrick',
-  material: 'BMC_Plastic',
-  size: [2, 2, 6],
+self.onmessage = async function(e) {
+  const { image, options } = e.data;
+
+  try {
+    const result = img2brs(image, options);
+
+    self.postMessage({
+      type: 'success',
+      result: result
+    });
+  } catch (error) {
+    self.postMessage({
+      type: 'error',
+      error: error.message || error.toString()
+    });
+  }
 };
 
-const brsBlob = img2brs('./path/to/image.png', options);
+// MyComponent.jsx
+import React, { useRef } from 'react';
 
-// Save to file
-const buffer = Buffer.from(await brsBlob.arrayBuffer());
-fs.writeFileSync('output.brs', buffer);
+export default function MyComponent() {
+  const workerRef = useRef(null);
+
+  workerRef.current = new Worker(
+      new URL('./img2brs-worker.js', import.meta.url)
+  );
+
+  // ...
+
+  async function onClick() {
+    const image = await createImageBitmap(file); // file = user uploaded file via HTML input
+    workerRef.current.postMessage({
+      image,
+      options,
+    });
+  }
+
+}
 ```
 
 
@@ -72,16 +110,15 @@ fs.writeFileSync('output.brs', buffer);
 ### Function Signature
 
 ```javascript
-img2brs(file, options, shouldDownload = false)
+img2brs(image, options)
 ```
 
 ### Parameters
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `file` | `File \| Buffer \| String` | Yes | Input image file to convert<br>• **Browser:** `File` object (from file input or drag-and-drop)<br>• **Node.js:** `Buffer` object or file path string |
+| `image` | `ImageBitmap` | Yes | Input image to convert<br> |
 | `options` | `Object` | Yes | Configuration options for the conversion process |
-| `shouldDownload` | `Boolean` | No | **Browser-only.** Whether to automatically download the generated .brs file<br>**Default:** `false` |
 
 ### Options Object
 
@@ -92,7 +129,6 @@ img2brs(file, options, shouldDownload = false)
 | `size` | `[Number, Number, Number]` | Yes | The dimensions of each brick as `[width, depth, height]` | `[2, 2, 6]` |
 | `simpleDirection` | `String` | No | Orientation of the brick placement<br>**Values:** `"vertical"` or `"horizontal"` | `'vertical'` |
 | `description` | `String` | No | Description for the save file | `'It is Dawson!'` |
-| `saveName` | `String` | No | Name for the downloaded file (browser only) | `'doggy.brs'` |
 
 ### Return Value
 

@@ -1,34 +1,29 @@
 import brs from 'brs-js';
-import { createCanvas } from 'canvas';
-import { SIMPLE_DIRECTION_MAP, DEFAULT_DESCRIPTION, DEFAULT_FILE_NAME, isNode } from './constants';
+import { SIMPLE_DIRECTION_MAP, DEFAULT_DESCRIPTION } from './constants';
 import { getSaveTime, srgbToLinear } from './utils';
 
 /**
  * Converts inputted File into a .brs Blob
- * @param {File|Buffer|String} file - User uploaded File object or Buffer or file path for the file
+ *
+ * @param {ImageBitmap} file - User uploaded image as ImageBitmap
  * @param {String} options.brick - value in BRICKS
  * @param {String} options.material - value in MATERIALS
  * @param {[Number, Number, Number]} options.size
- * @param {Boolean} [shouldDownload=false] - (Browser-Only) whether file should be downloaded after conversion
  * @returns {Blob} representing a .brs file
  */
-export default function img2brs(file, options, shouldDownload = false) {
+export default function img2brs(file, options) {
   const {
     brick,
     material,
     size,
     simpleDirection,
     description,
-    saveName,
   } = options;
 
-  let img = new Image();
-  img.src = isNode ? file : file.preview;
+  const img = file;
 
-  const canvas = isNode ? createCanvas() : document.createElement('canvas');
+  const canvas = new OffscreenCanvas(img.width, img.height);
   const ctx = canvas.getContext('2d');
-  canvas.width = img.width;
-  canvas.height = img.height;
   ctx.drawImage(img, 0, 0);
 
   const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -59,22 +54,7 @@ export default function img2brs(file, options, shouldDownload = false) {
     bricks,
   };
 
-  const blob = new Blob([brs.write(writeData)]);
-
-  if (shouldDownload) {
-    const fileName = saveName || DEFAULT_FILE_NAME;
-    const url = URL.createObjectURL(blob);
-
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = fileName.endsWith('.brs') ? fileName : `${fileName}.brs`;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    URL.revokeObjectURL(url);
-  }
-
-  return blob;
+  return new Blob([brs.write(writeData)]);
 }
 
 /**
